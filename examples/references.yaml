@@ -1,0 +1,15 @@
+- tag: Smith2020
+  type: JournalArticle
+  title: My Article Title
+  year: 2020
+  authors:
+    - first: John
+      last: Smith
+  journal: Nature
+  volume: "123"
+  issue: "4"
+  pages: "100-110"
+  doi: 10.1038/s41586-020-1234-5
+
+- tag: Jones2021
+  doi: 10.1038/s41586-021-5678-9
