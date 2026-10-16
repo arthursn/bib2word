@@ -1,16 +1,11 @@
 [project]
 name = "bib2word"
 version = "0.1.0"
-description = "Add your description here"
+description = "Convert bibliographic references from YAML to Word-compatible XML, with DOI metadata fetching"
 readme = "README.md"
-authors = [
-    { name = "Arthur Nishikawa", email = "nishikawa.poli@gmail.com" }
-]
+authors = [{ name = "Arthur Nishikawa", email = "nishikawa.poli@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = [
-    "pyyaml>=6.0.3",
-    "requests>=2.34.2",
-]
+dependencies = ["pyyaml>=6.0.3", "requests>=2.34.2"]
 
 [project.scripts]
 bib2word = "bib2word.core:main"
