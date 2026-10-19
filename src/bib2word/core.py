@@ -461,13 +461,23 @@ def ref_to_xml(ref: dict) -> Element:
 
     # Standard numbers: prefer explicit standard_number, then isbn/issn/etc.
     std_num = ref.get("standard_number", "").strip()
+    std_nums = []
     if not std_num:
         for key in _STANDARD_NUMBER_KEYS:
-            if val := ref.get(key, "").strip():
-                std_num = val
+            if val := ref.get(key, ""):
+                if isinstance(val, str):
+                    std_num = std_num.strip()
+                elif isinstance(val, list):
+                    for v in val:
+                        if std_num := v.strip():
+                            std_nums.append(std_num)
+                    std_num = None
                 break
     if std_num:
         SubElement(source, b("StandardNumber")).text = _trunc(std_num)
+    if std_nums:
+        for std_num in std_nums:
+            SubElement(source, b("StandardNumber")).text = _trunc(std_num)
 
     if doi := ref.get("doi", "").strip():
         SubElement(source, b("DOI")).text = _trunc(doi)
