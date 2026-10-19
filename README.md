@@ -5,6 +5,13 @@ Microsoft Word-compatible XML bibliography file (suitable for use with Word's
 built-in citation manager). It can also automatically fetch reference metadata
 from [https://dx.doi.org](https://dx.doi.org) when only a DOI is provided.
 
+> **Acknowledgement** — The reference-type mapping, LCID language table, and
+> field-handling logic in this tool were informed by
+> [bibtex2wordbib](https://github.com/msdm/bibtex2wordbib) by
+> [msdm](https://github.com/msdm), which implements the same conversion as a
+> bash script based on the
+> [ECMA-376 standard](https://www.ecma-international.org/publications/standards/Ecma-376.htm).
+
 ## Installation
 
 ```bash
@@ -24,28 +31,68 @@ If `-o` is omitted, the output file is written next to the input file with a
 
 References are provided as a YAML list. Each entry supports the following fields:
 
-| Field       | Description                                           |
-| ----------- | ----------------------------------------------------- |
-| `tag`       | Unique citation key (required)                        |
-| `type`      | Reference type (see below; default: `JournalArticle`) |
-| `title`     | Title of the work                                     |
-| `year`      | Publication year                                      |
-| `authors`   | List of `{first, last}` name objects                  |
-| `journal`   | Journal or container title                            |
-| `volume`    | Volume number                                         |
-| `issue`     | Issue number                                          |
-| `pages`     | Page range (e.g. `100-110`)                           |
-| `publisher` | Publisher name                                        |
-| `doi`       | DOI (used for auto-fetch if no other fields set)      |
-| `url`       | URL                                                   |
+### Core fields
+
+| Field         | Description                                                       |
+| ------------- | ----------------------------------------------------------------- |
+| `tag`         | Unique citation key (required)                                    |
+| `type`        | Reference type (see below; default: `JournalArticle`)             |
+| `title`       | Title of the work                                                 |
+| `short_title` | Abbreviated title                                                 |
+| `year`        | Publication year                                                  |
+| `month`       | Publication month                                                 |
+| `day`         | Publication day                                                   |
+| `publisher`   | Publisher name                                                    |
+| `doi`         | DOI (used for auto-fetch when it is the only field set)           |
+| `url`         | URL                                                               |
+| `language`    | Language (BibTeX name or BCP-47 code, e.g. `english`, `fr`, `de`) |
+
+### Author roles
+
+Each role is a list of `{first, last}` name objects.
+
+| Field         | Word role  |
+| ------------- | ---------- |
+| `authors`     | Author     |
+| `editors`     | Editor     |
+| `inventors`   | Inventor   |
+| `translators` | Translator |
+
+### Periodical / book fields
+
+| Field            | Description                 |
+| ---------------- | --------------------------- |
+| `journal`        | Journal or container title  |
+| `volume`         | Volume number               |
+| `issue`          | Issue number                |
+| `pages`          | Page range (e.g. `100-110`) |
+| `edition`        | Edition                     |
+| `version`        | Version                     |
+| `number_volumes` | Number of volumes           |
+
+### Identifiers
+
+| Field             | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| `isbn`            | ISBN                                                   |
+| `issn`            | ISSN                                                   |
+| `ismn`            | ISMN                                                   |
+| `standard_number` | Any other standard number (overrides isbn/issn if set) |
+
+### Thesis-specific
+
+| Field         | Description                          |
+| ------------- | ------------------------------------ |
+| `thesis_type` | e.g. `PhD thesis`, `Master's thesis` |
 
 ### Supported reference types
 
-`JournalArticle`, `Book`, `BookSection`, `ConferenceProceedings`, `Report`,
-`Misc`, `Patent`
+`JournalArticle`, `ArticleInAPeriodical`, `Book`, `BookSection`,
+`ConferenceProceedings`, `Report`, `Misc`, `Patent`
 
-The `type` field is case-insensitive and also accepts common BibTeX aliases such
-as `article`, `inproceedings`, `phdthesis`, etc.
+The `type` field is case-insensitive and accepts common BibTeX/biblatex aliases
+such as `article`, `inbook`, `inproceedings`, `phdthesis`, `techreport`,
+`online`, etc.  See `core.py` for the full mapping.
 
 ### Example
 
@@ -64,8 +111,30 @@ as `article`, `inproceedings`, `phdthesis`, etc.
   doi: 10.1038/s41586-020-1234-5
 
 # Only a DOI — all metadata will be fetched automatically
-- tag: Jones2021
-  doi: 10.1038/s41586-021-5678-9
+- tag: Vaswani2017
+  doi: 10.48550/arXiv.1706.03762
+
+- tag: OpenAI2023
+  type: online
+  title: "ChatGPT: Optimizing Language Models for Dialogue"
+  year: 2023
+  month: "3"
+  day: "14"
+  authors:
+    - last: OpenAI
+  url: https://openai.com/blog/chatgpt
+  language: english
+
+- tag: NIST2023
+  type: techreport
+  title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  year: 2023
+  authors:
+    - last: "National Institute of Standards and Technology"
+  publisher: "National Institute of Standards and Technology"
+  url: https://doi.org/10.6028/NIST.AI.100-1
+  standard_number: "NIST AI 100-1"
+  language: english
 ```
 
 ## License

@@ -11,5 +11,28 @@
   pages: "100-110"
   doi: 10.1038/s41586-020-1234-5
 
-- tag: Jones2021
-  doi: 10.1038/s41586-021-5678-9
+# "Attention Is All You Need" — fetched automatically from DOI
+- tag: Vaswani2017
+  doi: 10.48550/arXiv.1706.03762
+
+- tag: OpenAI2023
+  type: online
+  title: "ChatGPT: Optimizing Language Models for Dialogue"
+  year: 2023
+  month: "3"
+  day: "14"
+  authors:
+    - last: OpenAI
+  url: https://openai.com/blog/chatgpt
+  language: english
+
+- tag: NIST2023
+  type: techreport
+  title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+  year: 2023
+  authors:
+    - last: "National Institute of Standards and Technology"
+  publisher: "National Institute of Standards and Technology"
+  url: https://doi.org/10.6028/NIST.AI.100-1
+  standard_number: "NIST AI 100-1"
+  language: english
