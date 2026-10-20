@@ -11,6 +11,6 @@ wheels/
 
 # Other
 *.xml
-uv.lock
+!tests/data/*.xml
 .python-version
 .aider*

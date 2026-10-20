@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:Sources xmlns:b="http://schemas.openxmlformats.org/officeDocument/2006/bibliography" SelectedStyle="">
+  <b:Source>
+    <b:Tag>Smith2020</b:Tag>
+    <b:SourceType>JournalArticle</b:SourceType>
+    <b:Title>My Article Title</b:Title>
+    <b:Year>2020</b:Year>
+    <b:Author>
+      <b:Author>
+        <b:NameList>
+          <b:Person>
+            <b:Last>Smith</b:Last>
+            <b:First>John</b:First>
+          </b:Person>
+        </b:NameList>
+      </b:Author>
+    </b:Author>
+    <b:JournalName>Nature</b:JournalName>
+    <b:Volume>123</b:Volume>
+    <b:Issue>4</b:Issue>
+    <b:Pages>100-110</b:Pages>
+    <b:DOI>10.1038/s41586-020-1234-5</b:DOI>
+  </b:Source>
+</b:Sources>
