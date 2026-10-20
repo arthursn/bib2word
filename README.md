@@ -88,11 +88,11 @@ Each role is a list of `{first, last}` name objects.
 ### Supported reference types
 
 `JournalArticle`, `ArticleInAPeriodical`, `Book`, `BookSection`,
-`ConferenceProceedings`, `Report`, `Misc`, `Patent`
+`ConferenceProceedings`, `Report`, `InternetSite`, `Misc`, `Patent`
 
 The `type` field is case-insensitive and accepts common BibTeX/biblatex aliases
 such as `article`, `inbook`, `inproceedings`, `phdthesis`, `techreport`,
-`online`, etc.  See `word_xml.py` for the full mapping.
+`online` (→ `InternetSite`, Word's "Web site" type), etc.  See `word_xml.py` for the full mapping.
 
 ### Example
 

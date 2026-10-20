@@ -47,6 +47,9 @@ def test_to_xml_string_does_not_mutate_input():
         ("PHDTHESIS", "Report"),
         ("inproceedings", "ConferenceProceedings"),
         ("Book", "Book"),
+        ("online", "InternetSite"),
+        ("webpage", "InternetSite"),
+        ("Website", "InternetSite"),
         ("ArtWork", "ArtWork"),  # unknown types pass through unchanged
     ],
 )

@@ -77,6 +77,8 @@ def test_fetch_handles_list_valued_fields(fake_get):
         ("proceedings-article", "ConferenceProceedings"),
         ("dissertation", "Report"),
         ("periodical", "ArticleInAPeriodical"),
+        ("webpage", "InternetSite"),
+        ("post-weblog", "InternetSite"),
         ("dataset", "Misc"),
     ],
 )

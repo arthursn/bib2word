@@ -48,12 +48,16 @@ SOURCE_TYPE_MAP: dict[str, str] = {
     "thesis": "Report",
     "mastersthesis": "Report",
     "phdthesis": "Report",
-    # Misc / online
+    # Online
+    "online": "InternetSite",
+    "webpage": "InternetSite",
+    "website": "InternetSite",
+    "www": "InternetSite",
+    "internetsite": "InternetSite",
+    # Misc
     "booklet": "Misc",
     "unpublished": "Misc",
     "misc": "Misc",
-    "online": "Misc",
-    "webpage": "Misc",
     # Patent
     "patent": "Patent",
 }

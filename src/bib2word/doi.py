@@ -17,7 +17,8 @@ CSL_TYPE_MAP: dict[str, str] = {
     "report": "Report",
     "thesis": "Report",
     "dissertation": "Report",
-    "webpage": "Misc",
+    "webpage": "InternetSite",
+    "post-weblog": "InternetSite",
     "periodical": "ArticleInAPeriodical",
 }
 
