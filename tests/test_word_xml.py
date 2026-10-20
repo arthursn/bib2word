@@ -217,6 +217,7 @@ def test_long_values_truncated_to_255_chars():
             source.findtext(
                 "b:Author/b:Author/b:NameList/b:Person/b:Last", namespaces=NS
             )
+            or ""
         )
         == 255
     )
