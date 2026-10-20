@@ -25,7 +25,7 @@ bib2word references.yaml [-o output.xml]
 ```
 
 If `-o` is omitted, the output file is written next to the input file with a
-`.xml` extension.
+`.xml` extension. The tool can also be run as `python -m bib2word`.
 
 ## Input Format
 
@@ -92,7 +92,7 @@ Each role is a list of `{first, last}` name objects.
 
 The `type` field is case-insensitive and accepts common BibTeX/biblatex aliases
 such as `article`, `inbook`, `inproceedings`, `phdthesis`, `techreport`,
-`online`, etc.  See `core.py` for the full mapping.
+`online`, etc.  See `word_xml.py` for the full mapping.
 
 ### Example
 
@@ -136,6 +136,24 @@ such as `article`, `inbook`, `inproceedings`, `phdthesis`, `techreport`,
   standard_number: "NIST AI 100-1"
   language: english
 ```
+
+## Development
+
+```bash
+uv sync            # install the package and dev dependencies
+uv run pytest      # run the test suite (no network access needed)
+uv run ruff check  # lint
+```
+
+Project layout:
+
+| Module                     | Responsibility                                     |
+| -------------------------- | -------------------------------------------------- |
+| `bib2word/cli.py`          | Argument parsing, user-facing messages, exit codes |
+| `bib2word/references.py`   | Loading and validating the YAML input              |
+| `bib2word/doi.py`          | Fetching metadata from dx.doi.org                  |
+| `bib2word/languages.py`    | Mapping language names/codes to Word LCIDs         |
+| `bib2word/word_xml.py`     | Building and serializing the Word XML              |
 
 ## License
 
