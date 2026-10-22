@@ -5,7 +5,7 @@ description = "Convert bibliographic references from YAML to Word-compatible XML
 readme = "README.md"
 authors = [{ name = "Arthur Nishikawa", email = "nishikawa.poli@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = ["pyyaml>=6.0.3", "requests>=2.34.2"]
+dependencies = ["requests>=2.34.2", "ruamel-yaml>=0.18"]
 
 [project.scripts]
 bib2word = "bib2word.cli:main"

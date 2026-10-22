@@ -4,10 +4,16 @@ import argparse
 import sys
 from pathlib import Path
 
-import yaml
+from ruamel.yaml import YAMLError
 
 from .doi import DOIFetchError, resolve_reference
-from .references import load_references, needs_fetch, text
+from .references import (
+    load_references,
+    needs_fetch,
+    patch_roundtrip_entry,
+    save_roundtrip,
+    text,
+)
 from .word_xml import build_sources, to_xml_string
 
 
@@ -28,30 +34,48 @@ def main(argv: list[str] | None = None) -> None:
         default=None,
         help="Output XML file (default: same name as input with .xml extension).",
     )
+    parser.add_argument(
+        "--fetch-all",
+        action="store_true",
+        help="Fetch DOI metadata for every reference that has a doi field, "
+        "not only those with no other fields.",
+    )
+    parser.add_argument(
+        "--update-input",
+        action="store_true",
+        help="Write fetched metadata back into the input YAML file in-place, "
+        "preserving comments on untouched entries.",
+    )
     args = parser.parse_args(argv)
 
     output: Path = args.output or args.input.with_suffix(".xml")
 
     try:
         refs = load_references(args.input)
-    except (OSError, yaml.YAMLError, ValueError) as e:
+        rt_refs = refs if args.update_input else None
+    except (OSError, YAMLError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
     resolved: list[dict] = []
     for i, ref in enumerate(refs, start=1):
-        # If only a doi is provided, fetch the rest from dx.doi.org
-        if needs_fetch(ref):
-            doi = text(ref, "doi")
+        doi = text(ref, "doi")
+        should_fetch = needs_fetch(ref) or (args.fetch_all and bool(doi))
+        if should_fetch:
             if not doi:
                 _warn(f"reference #{i} has no doi and no other fields, skipping.")
                 continue
             print(f"Fetching metadata for DOI: {doi} ...", file=sys.stderr)
             try:
                 ref = resolve_reference(ref)
+                if rt_refs is not None:
+                    patch_roundtrip_entry(rt_refs[i - 1], ref)
             except DOIFetchError as e:
                 _warn(f"could not fetch DOI {doi!r}: {e}")
         resolved.append(ref)
+
+    if rt_refs is not None:
+        save_roundtrip(args.input, rt_refs)
 
     output.write_text(to_xml_string(build_sources(resolved)), encoding="utf-8")
     print(f"Written to {output}", file=sys.stderr)

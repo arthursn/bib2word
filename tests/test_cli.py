@@ -109,3 +109,103 @@ def test_missing_input_file_exits_with_error(tmp_path, capsys):
 
     assert exc.value.code == 1
     assert "Error:" in capsys.readouterr().err
+
+
+# ---------------------------------------------------------------------------
+# --fetch-all
+# ---------------------------------------------------------------------------
+
+
+def test_fetch_all_fetches_ref_with_existing_fields(tmp_path, fake_get, capsys):
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text("- tag: Doe2021\n  doi: 10.1/x\n  title: Old Title\n")
+
+    main([str(input_path), "--fetch-all"])
+
+    [source] = sources_in(tmp_path / "refs.xml")
+    assert source.findtext("b:Title", namespaces=NS) == "A Great Paper"
+    assert "Fetching metadata for DOI: 10.1/x" in capsys.readouterr().err
+
+
+def test_fetch_all_skips_ref_without_doi(tmp_path, fake_get):
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text("- tag: A\n  title: T\n")
+
+    main([str(input_path), "--fetch-all"])
+
+    assert fake_get.calls == []
+
+
+def test_without_fetch_all_ref_with_fields_is_not_fetched(tmp_path, fake_get):
+    """Baseline: without --fetch-all a ref with existing fields is left alone."""
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text("- tag: A\n  doi: 10.1/x\n  title: Old Title\n")
+
+    main([str(input_path)])
+
+    assert fake_get.calls == []
+
+
+# ---------------------------------------------------------------------------
+# --update-input
+# ---------------------------------------------------------------------------
+
+
+def test_update_input_rewrites_fetched_ref(tmp_path, fake_get):
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text("- tag: Doe2021\n  doi: 10.1/x\n")
+
+    main([str(input_path), "--update-input"])
+
+    updated = input_path.read_text()
+    assert "A Great Paper" in updated
+    assert "Doe2021" in updated
+
+
+def test_update_input_preserves_comment_on_untouched_ref(tmp_path, fake_get):
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text(
+        "# keep this comment\n"
+        "- tag: Static\n"
+        "  title: Unchanged\n"
+        "- tag: Doe2021\n"
+        "  doi: 10.1/x\n"
+    )
+
+    main([str(input_path), "--update-input"])
+
+    updated = input_path.read_text()
+    assert "# keep this comment" in updated
+    assert "Unchanged" in updated
+    assert "A Great Paper" in updated
+
+
+def test_update_input_does_not_rewrite_unfetched_ref(tmp_path, fake_get):
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text(
+        "- tag: A\n  title: Hand Written\n  doi: 10.1/x\n- tag: B\n  doi: 10.1/x\n"
+    )
+
+    main([str(input_path), "--update-input"])
+
+    updated = input_path.read_text()
+    assert "Hand Written" in updated  # untouched ref preserved
+
+
+def test_update_input_with_fetch_all_rewrites_all_doi_refs(tmp_path, fake_get):
+    fake_get["10.1/x"] = FakeResponse(CSL_PAYLOAD)
+    input_path = tmp_path / "refs.yaml"
+    input_path.write_text(
+        "- tag: A\n  doi: 10.1/x\n  title: Old\n- tag: B\n  doi: 10.1/x\n"
+    )
+
+    main([str(input_path), "--fetch-all", "--update-input"])
+
+    updated = input_path.read_text()
+    assert updated.count("A Great Paper") == 2
+    assert "Old" not in updated
